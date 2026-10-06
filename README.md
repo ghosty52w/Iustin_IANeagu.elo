@@ -7,6 +7,19 @@ across every monthly rating list since August 2023.
 Open `index.html` in a browser. It has no build step and no dependencies besides
 Google Fonts, so it works straight from disk or on GitHub Pages.
 
+## Live site (GitHub Pages)
+
+Published at **https://ghosty52w.github.io/Iustin_IANeagu.elo/** once Pages is on:
+
+1. Merge this branch into `main`.
+2. In the repo, go to **Settings → Pages**.
+3. Under **Build and deployment**, set **Source** to *Deploy from a branch*,
+   then pick `main` and `/ (root)` and press **Save**.
+
+GitHub builds the site in about a minute. After that, every push to `main`
+(for example a new month in `data/ratings.js`) updates the live site.
+The empty `.nojekyll` file tells Pages to serve the files as they are.
+
 ## What's on the page
 
 - Current standard, rapid and blitz ratings with change, peak and games rated
