@@ -9,16 +9,14 @@ Google Fonts, so it works straight from disk or on GitHub Pages.
 
 ## Live site (GitHub Pages)
 
-Published at **https://ghosty52w.github.io/Iustin_IANeagu.elo/** once Pages is on:
+Published at **https://ghosty52w.github.io/Iustin_IANeagu.elo/**.
 
-1. Merge this branch into `main`.
-2. In the repo, go to **Settings → Pages**.
-3. Under **Build and deployment**, set **Source** to *Deploy from a branch*,
-   then pick `main` and `/ (root)` and press **Save**.
+One-time setup: in the repo go to **Settings → Pages**, and under
+**Build and deployment → Source** choose **GitHub Actions**. That's all.
 
-GitHub builds the site in about a minute. After that, every push to `main`
-(for example a new month in `data/ratings.js`) updates the live site.
-The empty `.nojekyll` file tells Pages to serve the files as they are.
+The workflow in `.github/workflows/pages.yml` publishes the site on every push
+to `main` (for example a new month in `data/ratings.js`). You can also run it
+by hand from the **Actions** tab → *Deploy site to GitHub Pages* → *Run workflow*.
 
 ## What's on the page
 
