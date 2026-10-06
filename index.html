@@ -1,0 +1,438 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Iustin Neagu Elo</title>
+<meta name="description" content="Elo rating progression of chess player Iustin Alex Neagu.">
+<style>
+  :root {
+    color-scheme: light;
+    --page: #f9f9f7;
+    --surface-1: #fcfcfb;
+    --text-primary: #0b0b0b;
+    --text-secondary: #52514e;
+    --text-muted: #898781;
+    --grid: #e1e0d9;
+    --axis: #c3c2b7;
+    --border: rgba(11,11,11,0.10);
+    --up: #006300;
+    --down: #d03b3b;
+    --series-standard: #2a78d6;
+    --series-rapid: #eb6834;
+    --series-blitz: #1baf7a;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --page: #0d0d0d;
+      --surface-1: #1a1a19;
+      --text-primary: #ffffff;
+      --text-secondary: #c3c2b7;
+      --grid: #2c2c2a;
+      --axis: #383835;
+      --border: rgba(255,255,255,0.10);
+      --up: #0ca30c;
+      --down: #e66767;
+      --series-standard: #3987e5;
+      --series-rapid: #d95926;
+      --series-blitz: #199e70;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --page: #0d0d0d;
+    --surface-1: #1a1a19;
+    --text-primary: #ffffff;
+    --text-secondary: #c3c2b7;
+    --grid: #2c2c2a;
+    --axis: #383835;
+    --border: rgba(255,255,255,0.10);
+    --up: #0ca30c;
+    --down: #e66767;
+    --series-standard: #3987e5;
+    --series-rapid: #d95926;
+    --series-blitz: #199e70;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--page);
+    color: var(--text-primary);
+    font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  main { max-width: 960px; margin: 0 auto; padding: 32px 16px 48px; }
+  h1 { font-size: 26px; margin: 0 0 4px; letter-spacing: -0.01em; }
+  h2 { font-size: 16px; margin: 0 0 12px; }
+  .sub { color: var(--text-secondary); margin: 0 0 24px; }
+  .sub a { color: inherit; }
+
+  .filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+  .filters button {
+    font: inherit; font-size: 14px;
+    padding: 6px 14px; border-radius: 999px;
+    border: 1px solid var(--border); background: var(--surface-1);
+    color: var(--text-secondary); cursor: pointer;
+  }
+  .filters button[aria-pressed="true"] {
+    color: var(--text-primary); font-weight: 600; border-color: var(--text-secondary);
+  }
+  .filters button:disabled { opacity: 0.45; cursor: default; }
+
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 16px; }
+  .tile, .card {
+    background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px;
+  }
+  .tile { padding: 14px 16px; }
+  .tile .label { color: var(--text-secondary); font-size: 13px; }
+  .tile .value { font-size: 28px; font-weight: 650; line-height: 1.2; margin-top: 2px; }
+  .tile .meta { color: var(--text-muted); font-size: 12px; margin-top: 2px; }
+  .delta-up { color: var(--up); }
+  .delta-down { color: var(--down); }
+
+  .card { padding: 16px; margin-bottom: 16px; }
+  .chart-wrap { position: relative; }
+  svg { display: block; width: 100%; height: auto; overflow: visible; }
+  .grid line { stroke: var(--grid); stroke-width: 1; }
+  .axis text { fill: var(--text-muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+  .baseline { stroke: var(--axis); stroke-width: 1; }
+  .series-line { fill: none; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+  .series-dot { stroke: var(--surface-1); stroke-width: 2; }
+  .direct-label { fill: var(--text-secondary); font-size: 12px; font-weight: 600; }
+  .crosshair { stroke: var(--text-muted); stroke-width: 1; }
+  .empty-note { fill: var(--text-muted); font-size: 13px; }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 8px; color: var(--text-secondary); font-size: 13px; }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .legend i { display: inline-block; width: 16px; height: 2px; border-radius: 1px; }
+
+  .tooltip {
+    position: absolute; pointer-events: none; z-index: 2;
+    background: var(--surface-1); border: 1px solid var(--border); border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+    padding: 8px 10px; font-size: 13px; min-width: 140px; display: none;
+  }
+  .tooltip .tt-date { color: var(--text-secondary); margin-bottom: 4px; }
+  .tooltip .tt-row { display: flex; align-items: center; gap: 8px; }
+  .tooltip .tt-row i { width: 12px; height: 2px; border-radius: 1px; flex: none; }
+  .tooltip .tt-row b { font-variant-numeric: tabular-nums; }
+  .tooltip .tt-row span { color: var(--text-secondary); }
+
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--grid); vertical-align: top; }
+  th { color: var(--text-secondary); font-weight: 600; font-size: 13px; }
+  td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  th.num { text-align: right; }
+  .table-scroll { overflow-x: auto; }
+  td .note { color: var(--text-muted); font-size: 12px; }
+
+  .callout {
+    color: var(--text-secondary); font-size: 14px;
+    border-left: 3px solid var(--axis); padding: 4px 0 4px 12px; margin: 0;
+  }
+  code { font-size: 13px; }
+</style>
+</head>
+<body>
+<main>
+  <h1 id="title">Elo progression</h1>
+  <p class="sub" id="subtitle"></p>
+
+  <div class="filters" role="group" aria-label="Rating type" id="filters"></div>
+
+  <div class="tiles" id="tiles"></div>
+
+  <section class="card">
+    <h2 id="chart-title">Rating over time</h2>
+    <div class="chart-wrap" id="chart-wrap">
+      <svg id="chart" role="img" aria-labelledby="chart-title"></svg>
+      <div class="tooltip" id="tooltip" role="status"></div>
+    </div>
+    <div class="legend" id="legend"></div>
+  </section>
+
+  <section class="card">
+    <h2>All rating entries</h2>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>Date</th><th>Type</th><th class="num">Rating</th><th class="num">Change</th><th>Source</th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <p class="callout" id="callout"></p>
+</main>
+
+<script src="data/ratings.js"></script>
+<script>
+(function () {
+  const DATA = window.ELO_DATA || { player: {}, entries: [] };
+  const TYPES = [
+    { key: "standard", label: "Standard", color: "var(--series-standard)" },
+    { key: "rapid",    label: "Rapid",    color: "var(--series-rapid)" },
+    { key: "blitz",    label: "Blitz",    color: "var(--series-blitz)" },
+  ];
+  const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  const SVG_NS = "http://www.w3.org/2000/svg";
+
+  function parseDate(s) {
+    const [y, m, d] = String(s).split("-").map(Number);
+    return new Date(y, (m || 1) - 1, d || 1);
+  }
+  function fmtDate(e) {
+    const dt = e.t;
+    const parts = String(e.date).split("-");
+    return parts.length >= 3
+      ? `${dt.getDate()} ${MONTHS[dt.getMonth()]} ${dt.getFullYear()}`
+      : `${MONTHS[dt.getMonth()]} ${dt.getFullYear()}`;
+  }
+  function el(tag, attrs, text) {
+    const n = tag.startsWith("svg:") ? document.createElementNS(SVG_NS, tag.slice(4)) : document.createElement(tag);
+    for (const k in attrs || {}) n.setAttribute(k, attrs[k]);
+    if (text != null) n.textContent = text;
+    return n;
+  }
+  function signed(n) { return (n > 0 ? "+" : n < 0 ? "−" : "±") + Math.abs(n); }
+
+  const entries = (DATA.entries || [])
+    .filter(e => e && Number.isFinite(e.rating) && e.date)
+    .map(e => ({ ...e, type: e.type || "standard", t: parseDate(e.date) }))
+    .sort((a, b) => a.t - b.t);
+
+  const byType = {};
+  TYPES.forEach(T => { byType[T.key] = entries.filter(e => e.type === T.key); });
+  const available = TYPES.filter(T => byType[T.key].length);
+  let active = new Set(available.map(T => T.key));
+
+  // Header
+  const name = (DATA.player && DATA.player.name) || "Player";
+  document.getElementById("title").textContent = `${name} — Elo progression`;
+  document.title = `${name.split(" ")[0]} ${name.split(" ").slice(-1)[0]} Elo`;
+  const sub = document.getElementById("subtitle");
+  sub.textContent = `${entries.length} rating ${entries.length === 1 ? "entry" : "entries"}`;
+  if (entries.length) {
+    const from = fmtDate(entries[0]), to = fmtDate(entries[entries.length - 1]);
+    sub.textContent += from === to ? `, ${from}` : `, ${from} – ${to}`;
+  }
+  if (DATA.player && DATA.player.fideId) {
+    sub.append(" · ");
+    const a = el("a", { href: `https://ratings.fide.com/profile/${encodeURIComponent(DATA.player.fideId)}`, rel: "noopener" }, `FIDE ID ${DATA.player.fideId}`);
+    sub.append(a);
+  }
+
+  // Filters
+  const filters = document.getElementById("filters");
+  TYPES.forEach(T => {
+    const b = el("button", { type: "button", "aria-pressed": String(active.has(T.key)) }, T.label);
+    if (!byType[T.key].length) { b.disabled = true; b.title = "No entries yet"; }
+    b.addEventListener("click", () => {
+      if (active.has(T.key)) { if (active.size > 1) active.delete(T.key); }
+      else active.add(T.key);
+      filters.querySelectorAll("button").forEach((btn, i) => btn.setAttribute("aria-pressed", String(active.has(TYPES[i].key))));
+      render();
+    });
+    filters.append(b);
+  });
+
+  // Tiles: the primary series is the first active type with data.
+  function renderTiles() {
+    const box = document.getElementById("tiles");
+    box.replaceChildren();
+    const T = TYPES.find(T => active.has(T.key) && byType[T.key].length);
+    if (!T) return;
+    const s = byType[T.key];
+    const first = s[0], last = s[s.length - 1];
+    const peak = s.reduce((a, b) => (b.rating > a.rating ? b : a));
+    const tiles = [
+      { label: `Current ${T.label.toLowerCase()}`, value: last.rating, meta: fmtDate(last) },
+      { label: "Peak", value: peak.rating, meta: fmtDate(peak) },
+      { label: "Total change", value: s.length > 1 ? signed(last.rating - first.rating) : "—",
+        meta: s.length > 1 ? `since ${fmtDate(first)}` : "needs 2+ entries",
+        cls: last.rating > first.rating ? "delta-up" : last.rating < first.rating ? "delta-down" : "" },
+      { label: "Entries", value: s.length, meta: `${T.label} list` },
+    ];
+    tiles.forEach(t => {
+      const d = el("div", { class: "tile" });
+      d.append(el("div", { class: "label" }, t.label));
+      d.append(el("div", { class: "value" + (t.cls ? " " + t.cls : "") }, String(t.value)));
+      d.append(el("div", { class: "meta" }, t.meta));
+      box.append(d);
+    });
+  }
+
+  // Chart
+  const svg = document.getElementById("chart");
+  const wrap = document.getElementById("chart-wrap");
+  const tip = document.getElementById("tooltip");
+
+  function niceStep(range) {
+    const raw = range / 5;
+    const pow = Math.pow(10, Math.floor(Math.log10(raw)));
+    const n = raw / pow;
+    return (n < 1.5 ? 1 : n < 3 ? 2 : n < 7 ? 5 : 10) * pow;
+  }
+
+  function renderChart() {
+    const W = Math.max(320, wrap.clientWidth), H = W < 560 ? 260 : 340;
+    const M = { top: 16, right: W < 560 ? 64 : 88, bottom: 28, left: 44 };
+    svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+    svg.replaceChildren();
+
+    const shown = TYPES.filter(T => active.has(T.key) && byType[T.key].length);
+    const pts = shown.flatMap(T => byType[T.key]);
+    if (!pts.length) {
+      svg.append(el("svg:text", { x: W / 2, y: H / 2, "text-anchor": "middle", class: "empty-note" }, "No rating entries yet — add them to data/ratings.js"));
+      return;
+    }
+
+    // Domains (padded so a single point still sits mid-chart)
+    let t0 = Math.min(...pts.map(p => +p.t)), t1 = Math.max(...pts.map(p => +p.t));
+    const DAY = 864e5;
+    if (t1 - t0 < 60 * DAY) { t0 -= 180 * DAY; t1 += 180 * DAY; }
+    let r0 = Math.min(...pts.map(p => p.rating)), r1 = Math.max(...pts.map(p => p.rating));
+    if (r1 - r0 < 100) { const mid = (r0 + r1) / 2; r0 = mid - 100; r1 = mid + 100; }
+    const step = niceStep(r1 - r0);
+    r0 = Math.floor(r0 / step) * step; r1 = Math.ceil(r1 / step) * step;
+
+    const x = t => M.left + (t - t0) / (t1 - t0) * (W - M.left - M.right);
+    const y = r => M.top + (1 - (r - r0) / (r1 - r0)) * (H - M.top - M.bottom);
+
+    // Grid + y axis
+    const grid = el("svg:g", { class: "grid" }), axis = el("svg:g", { class: "axis" });
+    for (let r = r0; r <= r1 + 1e-9; r += step) {
+      if (r > r0) grid.append(el("svg:line", { x1: M.left, x2: W - M.right, y1: y(r), y2: y(r) }));
+      axis.append(el("svg:text", { x: M.left - 8, y: y(r) + 4, "text-anchor": "end" }, String(r)));
+    }
+    // X ticks: years, or months if span is short
+    const span = (t1 - t0) / DAY;
+    const d0 = new Date(t0), ticks = [];
+    if (span > 540) {
+      for (let yr = d0.getFullYear(); ; yr++) { const t = +new Date(yr, 0, 1); if (t > t1) break; if (t >= t0) ticks.push([t, String(yr)]); }
+    } else {
+      const every = span > 270 ? 3 : 2;
+      for (let d = new Date(d0.getFullYear(), d0.getMonth() + 1, 1); +d <= t1; d = new Date(d.getFullYear(), d.getMonth() + every, 1))
+        ticks.push([+d, `${MONTHS[d.getMonth()]} ${String(d.getFullYear()).slice(2)}`]);
+    }
+    ticks.forEach(([t, label]) => axis.append(el("svg:text", { x: x(t), y: H - 8, "text-anchor": "middle" }, label)));
+    svg.append(grid);
+    svg.append(el("svg:line", { class: "baseline", x1: M.left, x2: W - M.right, y1: H - M.bottom, y2: H - M.bottom }));
+    svg.append(axis);
+
+    // Series
+    const labelYs = [];
+    shown.forEach(T => {
+      const s = byType[T.key];
+      const g = el("svg:g");
+      if (s.length > 1) {
+        g.append(el("svg:path", {
+          class: "series-line", stroke: T.color,
+          d: s.map((p, i) => `${i ? "L" : "M"}${x(+p.t).toFixed(1)},${y(p.rating).toFixed(1)}`).join(""),
+        }));
+      }
+      s.forEach((p, i) => {
+        const isEnd = i === s.length - 1;
+        if (s.length <= 24 || isEnd) g.append(el("svg:circle", { class: "series-dot", cx: x(+p.t), cy: y(p.rating), r: isEnd ? 5 : 3.5, fill: T.color }));
+      });
+      // Direct label at the series end, nudged to avoid overlaps
+      const last = s[s.length - 1];
+      let ly = y(last.rating) + 4;
+      while (labelYs.some(v => Math.abs(v - ly) < 14)) ly += 14;
+      labelYs.push(ly);
+      g.append(el("svg:text", { class: "direct-label", x: x(+last.t) + 10, y: ly }, `${last.rating}`));
+      svg.append(g);
+    });
+
+    // Hover layer: crosshair snaps to nearest observation date
+    const dates = [...new Set(pts.map(p => +p.t))].sort((a, b) => a - b);
+    const cross = el("svg:line", { class: "crosshair", y1: M.top, y2: H - M.bottom, visibility: "hidden" });
+    svg.append(cross);
+    const hit = el("svg:rect", { x: M.left - 12, y: 0, width: W - M.left - M.right + 24, height: H, fill: "transparent", tabindex: "0", "aria-label": "Chart data; use arrow keys to step through dates" });
+    svg.append(hit);
+    let idx = dates.length - 1;
+
+    function show(i) {
+      idx = Math.max(0, Math.min(dates.length - 1, i));
+      const t = dates[idx], cx = x(t);
+      cross.setAttribute("x1", cx); cross.setAttribute("x2", cx); cross.setAttribute("visibility", "visible");
+      tip.replaceChildren();
+      const atDate = pts.filter(p => +p.t === t);
+      tip.append(el("div", { class: "tt-date" }, fmtDate(atDate[0])));
+      shown.forEach(T => {
+        const p = atDate.find(p => p.type === T.key);
+        if (!p) return;
+        const row = el("div", { class: "tt-row" });
+        const key = el("i"); key.style.background = T.color;
+        const prev = byType[T.key][byType[T.key].indexOf(p) - 1];
+        row.append(key, el("b", {}, String(p.rating)), el("span", {}, T.label + (prev ? ` (${signed(p.rating - prev.rating)})` : "")));
+        tip.append(row);
+        if (p.note) tip.append(el("div", { class: "tt-date" }, p.note));
+      });
+      tip.style.display = "block";
+      const scale = wrap.clientWidth / W;
+      const left = cx * scale + 12, tw = tip.offsetWidth;
+      const flipped = left + tw > wrap.clientWidth ? cx * scale - tw - 12 : left;
+      tip.style.left = Math.max(0, Math.min(flipped, wrap.clientWidth - tw)) + "px";
+      tip.style.top = (M.top * scale) + "px";
+    }
+    function hide() { cross.setAttribute("visibility", "hidden"); tip.style.display = "none"; }
+    hit.addEventListener("pointermove", ev => {
+      const r = svg.getBoundingClientRect();
+      const px = (ev.clientX - r.left) * (W / r.width);
+      let best = 0;
+      dates.forEach((t, i) => { if (Math.abs(x(t) - px) < Math.abs(x(dates[best]) - px)) best = i; });
+      show(best);
+    });
+    hit.addEventListener("pointerleave", hide);
+    hit.addEventListener("focus", () => show(idx));
+    hit.addEventListener("blur", hide);
+    hit.addEventListener("keydown", ev => {
+      if (ev.key === "ArrowLeft") { show(idx - 1); ev.preventDefault(); }
+      if (ev.key === "ArrowRight") { show(idx + 1); ev.preventDefault(); }
+    });
+
+    // Legend (only when more than one series is shown)
+    const legend = document.getElementById("legend");
+    legend.replaceChildren();
+    if (shown.length > 1) shown.forEach(T => {
+      const s = el("span"); const i = el("i"); i.style.background = T.color;
+      s.append(i, document.createTextNode(T.label)); legend.append(s);
+    });
+  }
+
+  function renderTable() {
+    const body = document.getElementById("rows");
+    body.replaceChildren();
+    const rows = entries.filter(e => active.has(e.type)).slice().reverse();
+    rows.forEach(e => {
+      const s = byType[e.type], prev = s[s.indexOf(e) - 1];
+      const tr = el("tr");
+      tr.append(el("td", {}, fmtDate(e)));
+      tr.append(el("td", {}, (TYPES.find(T => T.key === e.type) || { label: e.type }).label));
+      tr.append(el("td", { class: "num" }, String(e.rating)));
+      const d = prev ? e.rating - prev.rating : null;
+      tr.append(el("td", { class: "num" + (d > 0 ? " delta-up" : d < 0 ? " delta-down" : "") }, d == null ? "—" : signed(d)));
+      const src = el("td", {}, e.source || "");
+      if (e.note) { src.append(el("br")); src.append(el("span", { class: "note" }, e.note)); }
+      tr.append(src);
+      body.append(tr);
+    });
+  }
+
+  function renderCallout() {
+    const c = document.getElementById("callout");
+    const std = byType.standard.length;
+    c.textContent = std < 2
+      ? "Only one verified rating is on record so far. Add each monthly FIDE list rating to data/ratings.js and the progression line, deltas and peak fill in automatically."
+      : "Data lives in data/ratings.js — add a new entry after each FIDE rating list to extend the progression.";
+  }
+
+  function render() { renderTiles(); renderChart(); renderTable(); renderCallout(); }
+  render();
+  let raf;
+  window.addEventListener("resize", () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(renderChart); });
+})();
+</script>
+</body>
+</html>
