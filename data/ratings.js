@@ -1,25 +1,68 @@
-// Elo history for Iustin Alex Neagu.
+// FIDE rating history for Iustin-Alex Neagu.
 //
-// Add one object per rating observation, in any order (the page sorts by date).
-//   date    "YYYY-MM" (rating-list month) or "YYYY-MM-DD"
-//   type    "standard" | "rapid" | "blitz"
-//   rating  integer Elo
-//   source  where the number came from (FIDE list, ChessBase, chess-results, ...)
-//   note    optional free text (event, games played, K-factor, ...)
+// Source: FIDE ratings profile https://ratings.fide.com/profile/42230217
+// (Progress tab), transcribed from the October 2026 list.
 //
-// Only record numbers you can trace to a source.
+// One row per monthly FIDE rating list. To update, add the newest list as a
+// new row (order does not matter, the page sorts by period) and bump `asOf`.
+// Use null where FIDE shows no rating for that list.
+//
+//   [ period,   standard, std games, rapid, rapid games, blitz, blitz games ]
 window.ELO_DATA = {
   player: {
-    name: "Iustin Alex Neagu",
-    fideId: null, // fill in to link the FIDE profile
+    name: "Iustin-Alex Neagu",
+    fideId: "42230217",
+    federation: "Romania",
+    birthYear: 2010,
+    title: null,
   },
-  entries: [
-    {
-      date: "2026-10",
-      type: "standard",
-      rating: 1566,
-      source: "ChessBase Players directory (players.chessbase.com)",
-      note: "Listed at Elo 1566, age 16. Observed October 2026.",
-    },
+  asOf: "2026-10",
+  inactive: ["blitz"],
+  // Ranks among active players (and all players) on the asOf list.
+  ranks: {
+    national: { label: "Romania", active: 926, all: 3241 },
+    continent: { label: "Europe", active: 77562, all: 175958 },
+    world: { label: "World", active: 110996, all: 294525 },
+  },
+  lists: [
+    ["2023-08", null, null, 1195, 12, null, null],
+    ["2023-09", null, null, 1195, 0, null, null],
+    ["2023-10", 1105, 10, 1195, 0, 1105, 0],
+    ["2023-11", 1105, 0, 1195, 0, 1279, 13],
+    ["2023-12", 1105, 0, 1195, 0, 1279, 0],
+    ["2024-01", 1105, 0, 1195, 0, 1279, 0],
+    ["2024-02", 1105, 0, 1195, 0, 1279, 0],
+    ["2024-03", 1463, 0, 1517, 0, 1567, 0],
+    ["2024-04", 1463, 0, 1517, 0, 1567, 0],
+    ["2024-05", 1463, 0, 1517, 0, 1567, 0],
+    ["2024-06", 1463, 0, 1491, 4, 1584, 8],
+    ["2024-07", 1463, 0, 1491, 0, 1584, 0],
+    ["2024-08", 1463, 0, 1491, 0, 1584, 0],
+    ["2024-09", 1463, 0, 1491, 0, 1584, 0],
+    ["2024-10", 1463, 0, 1491, 0, 1584, 0],
+    ["2024-11", 1463, 0, 1491, 0, 1584, 0],
+    ["2024-12", 1463, 0, 1491, 0, 1584, 0],
+    ["2025-01", 1463, 0, 1491, 0, 1584, 0],
+    ["2025-02", 1463, 0, 1491, 0, 1584, 0],
+    ["2025-03", 1463, 0, 1491, 0, 1584, 0],
+    ["2025-04", 1463, 0, 1491, 0, 1584, 0],
+    ["2025-05", 1463, 0, 1491, 0, 1584, 0],
+    ["2025-06", 1463, 0, 1491, 0, 1584, 0],
+    ["2025-07", 1463, 0, 1491, 0, 1584, 0],
+    ["2025-08", 1463, 0, 1491, 0, 1584, 0],
+    ["2025-09", 1463, 0, 1491, 0, 1584, 0],
+    ["2025-10", 1463, 0, 1467, 5, 1449, 9],
+    ["2025-11", 1463, 0, 1467, 0, 1449, 0],
+    ["2025-12", 1463, 0, 1467, 0, 1449, 0],
+    ["2026-01", 1463, 0, 1467, 0, 1449, 0],
+    ["2026-02", 1463, 0, 1467, 0, 1449, 0],
+    ["2026-03", 1537, 9, 1467, 0, 1449, 0],
+    ["2026-04", 1488, 8, 1550, 6, 1449, 0],
+    ["2026-05", 1488, 0, 1550, 0, 1449, 0],
+    ["2026-06", 1568, 6, 1550, 0, 1449, 0],
+    ["2026-07", 1568, 0, 1626, 9, 1449, 0],
+    ["2026-08", 1566, 3, 1626, 0, 1449, 0],
+    ["2026-09", 1698, 15, 1626, 0, 1449, 0],
+    ["2026-10", 1756, 3, 1657, 6, 1449, 0],
   ],
 };

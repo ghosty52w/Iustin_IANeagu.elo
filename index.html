@@ -2,436 +2,738 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Iustin Neagu Elo</title>
-<meta name="description" content="Elo rating progression of chess player Iustin Alex Neagu.">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Iustin-Alex Neagu Elo</title>
+<meta name="description" content="FIDE rating progression of Romanian chess player Iustin-Alex Neagu: standard, rapid and blitz, every monthly list since 2023.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
+  /* Layout: one 1040px column. A board-edge strip opens the hero, then the
+     three time controls, the stepped rating chart, milestones and the full list table. */
   :root {
-    color-scheme: light;
-    --page: #f9f9f7;
-    --surface-1: #fcfcfb;
-    --text-primary: #0b0b0b;
-    --text-secondary: #52514e;
-    --text-muted: #898781;
-    --grid: #e1e0d9;
-    --axis: #c3c2b7;
-    --border: rgba(11,11,11,0.10);
+    --bg: #f3f4f1;
+    --surface: #fbfbf9;
+    --ink: #15181a;
+    --ink-2: #4c524e;
+    --muted: #7c827d;
+    --line: #dfe1dc;
+    --axis: #c2c6bf;
+    --sq-dark: #2b302d;
+    --sq-light: #e4e6e1;
     --up: #006300;
-    --down: #d03b3b;
-    --series-standard: #2a78d6;
-    --series-rapid: #eb6834;
-    --series-blitz: #1baf7a;
+    --down: #c43434;
+    --s-standard: #2a78d6;
+    --s-rapid: #eb6834;
+    --s-blitz: #1baf7a;
+    --shadow: 0 6px 24px rgba(21,24,26,0.10);
+
+    --f-display: "Archivo", "Arial Narrow", system-ui, sans-serif;
+    --f-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --f-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
       color-scheme: dark;
-      --page: #0d0d0d;
-      --surface-1: #1a1a19;
-      --text-primary: #ffffff;
-      --text-secondary: #c3c2b7;
-      --grid: #2c2c2a;
-      --axis: #383835;
-      --border: rgba(255,255,255,0.10);
-      --up: #0ca30c;
+      --bg: #101211;
+      --surface: #191b1a;
+      --ink: #f1f2ef;
+      --ink-2: #c0c4bd;
+      --muted: #8b908a;
+      --line: #2a2d2b;
+      --axis: #3b3f3c;
+      --sq-dark: #d9dcd5;
+      --sq-light: #2a2d2b;
+      --up: #2bb24a;
       --down: #e66767;
-      --series-standard: #3987e5;
-      --series-rapid: #d95926;
-      --series-blitz: #199e70;
+      --s-standard: #3987e5;
+      --s-rapid: #d95926;
+      --s-blitz: #199e70;
+      --shadow: 0 6px 24px rgba(0,0,0,0.45);
     }
   }
   :root[data-theme="dark"] {
     color-scheme: dark;
-    --page: #0d0d0d;
-    --surface-1: #1a1a19;
-    --text-primary: #ffffff;
-    --text-secondary: #c3c2b7;
-    --grid: #2c2c2a;
-    --axis: #383835;
-    --border: rgba(255,255,255,0.10);
-    --up: #0ca30c;
+    --bg: #101211;
+    --surface: #191b1a;
+    --ink: #f1f2ef;
+    --ink-2: #c0c4bd;
+    --muted: #8b908a;
+    --line: #2a2d2b;
+    --axis: #3b3f3c;
+    --sq-dark: #d9dcd5;
+    --sq-light: #2a2d2b;
+    --up: #2bb24a;
     --down: #e66767;
-    --series-standard: #3987e5;
-    --series-rapid: #d95926;
-    --series-blitz: #199e70;
+    --s-standard: #3987e5;
+    --s-rapid: #d95926;
+    --s-blitz: #199e70;
+    --shadow: 0 6px 24px rgba(0,0,0,0.45);
   }
 
   * { box-sizing: border-box; }
   body {
     margin: 0;
-    background: var(--page);
-    color: var(--text-primary);
-    font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    font: 15px/1.55 var(--f-body);
+    -webkit-font-smoothing: antialiased;
   }
-  main { max-width: 960px; margin: 0 auto; padding: 32px 16px 48px; }
-  h1 { font-size: 26px; margin: 0 0 4px; letter-spacing: -0.01em; }
-  h2 { font-size: 16px; margin: 0 0 12px; }
-  .sub { color: var(--text-secondary); margin: 0 0 24px; }
-  .sub a { color: inherit; }
+  .page { max-width: 1040px; margin: 0 auto; padding-inline: 16px; padding-block: 0 56px; }
+  h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; margin: 0; }
+  .eyebrow {
+    font: 500 12px/1.4 var(--f-mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted);
+  }
+  .mono { font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
+  .up { color: var(--up); }
+  .down { color: var(--down); }
+  button { font: inherit; color: inherit; }
+  :focus-visible { outline: 2px solid var(--s-standard); outline-offset: 2px; }
 
-  .filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
-  .filters button {
-    font: inherit; font-size: 14px;
-    padding: 6px 14px; border-radius: 999px;
-    border: 1px solid var(--border); background: var(--surface-1);
-    color: var(--text-secondary); cursor: pointer;
+  /* ---------- Hero ---------- */
+  .board-edge {
+    height: 14px;
+    background: repeating-conic-gradient(var(--sq-dark) 0 25%, var(--sq-light) 0 50%) 0 0 / 28px 28px;
+    border-radius: 0 0 3px 3px;
   }
-  .filters button[aria-pressed="true"] {
-    color: var(--text-primary); font-weight: 600; border-color: var(--text-secondary);
+  .hero {
+    display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 24px 40px; align-items: end;
+    padding-block: 40px 32px;
   }
-  .filters button:disabled { opacity: 0.45; cursor: default; }
+  .hero h1 {
+    font-size: clamp(40px, 7.4vw, 80px); line-height: 0.95; letter-spacing: -0.02em;
+    font-weight: 800; font-stretch: 112%;
+  }
+  .hero .meta { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 6px 16px; color: var(--ink-2); }
+  .hero .meta span { white-space: nowrap; }
+  .hero .meta b { font-weight: 600; color: var(--ink); }
+  .headline { text-align: right; }
+  .headline .big {
+    font-family: var(--f-display); font-weight: 300; font-stretch: 125%;
+    font-size: clamp(64px, 11vw, 124px); line-height: 0.9; letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+  }
+  .headline .caption { color: var(--ink-2); margin-top: 6px; }
+  .headline .caption b { font-weight: 600; }
+  .summary {
+    margin: 0 0 28px; max-width: 68ch; color: var(--ink-2); font-size: 16px;
+  }
+  .summary b { color: var(--ink); font-weight: 600; }
 
-  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 16px; }
-  .tile, .card {
-    background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px;
+  /* ---------- Time-control cards ---------- */
+  .controls { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  .tc {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+    padding: 16px 18px; display: grid; gap: 4px; position: relative;
   }
-  .tile { padding: 14px 16px; }
-  .tile .label { color: var(--text-secondary); font-size: 13px; }
-  .tile .value { font-size: 28px; font-weight: 650; line-height: 1.2; margin-top: 2px; }
-  .tile .meta { color: var(--text-muted); font-size: 12px; margin-top: 2px; }
-  .delta-up { color: var(--up); }
-  .delta-down { color: var(--down); }
+  .tc header { display: flex; align-items: center; gap: 8px; color: var(--ink-2); font-weight: 500; }
+  .tc header svg { width: 18px; height: 18px; flex: none; }
+  .tc header i { width: 10px; height: 10px; border-radius: 2px; margin-left: auto; }
+  .tc .val {
+    font-family: var(--f-display); font-stretch: 115%; font-weight: 600; font-size: 40px; line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+  }
+  .tc .sub { color: var(--muted); font-size: 13px; display: flex; flex-wrap: wrap; gap: 2px 12px; }
+  .pill {
+    display: inline-block; font: 500 11px/1 var(--f-mono); letter-spacing: 0.05em; text-transform: uppercase;
+    border: 1px solid var(--axis); color: var(--ink-2); border-radius: 999px; padding: 4px 8px; vertical-align: middle;
+  }
 
-  .card { padding: 16px; margin-bottom: 16px; }
+  /* ---------- Ranks ---------- */
+  .ranks {
+    display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px;
+    margin-top: 28px; padding-block: 18px; border-block: 1px solid var(--line);
+  }
+  .rank .n { font-family: var(--f-display); font-stretch: 110%; font-weight: 600; font-size: 26px; font-variant-numeric: tabular-nums; }
+  .rank .of { color: var(--muted); font-size: 13px; }
+
+  /* ---------- Sections ---------- */
+  section { margin-top: 48px; }
+  .sec-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 16px; margin-bottom: 14px; }
+  .sec-head h2 { font-size: 26px; font-weight: 700; font-stretch: 108%; letter-spacing: -0.01em; }
+  .sec-head p { margin: 0; color: var(--ink-2); }
+
+  /* Filter row */
+  .filters { display: flex; flex-wrap: wrap; gap: 10px 20px; align-items: center; margin-bottom: 12px; }
+  .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: var(--surface); }
+  .seg button {
+    border: 0; background: none; padding: 7px 14px; cursor: pointer; color: var(--ink-2);
+    font: 500 13px/1 var(--f-mono);
+  }
+  .seg button + button { border-left: 1px solid var(--line); }
+  .seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+  .toggles { display: flex; flex-wrap: wrap; gap: 8px; }
+  .toggle {
+    display: inline-flex; align-items: center; gap: 8px; cursor: pointer;
+    border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 5px 12px 5px 10px;
+    font-size: 13px; color: var(--ink-2);
+  }
+  .toggle i { width: 14px; height: 3px; border-radius: 2px; }
+  .toggle[aria-pressed="false"] { opacity: 0.5; }
+  .toggle[aria-pressed="false"] i { background: var(--axis) !important; }
+
+  .chart-card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px 12px 10px 4px; }
   .chart-wrap { position: relative; }
-  svg { display: block; width: 100%; height: auto; overflow: visible; }
-  .grid line { stroke: var(--grid); stroke-width: 1; }
-  .axis text { fill: var(--text-muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+  svg.chart { display: block; width: 100%; height: auto; overflow: visible; touch-action: pan-y; }
+  .grid line { stroke: var(--line); stroke-width: 1; }
+  .axis text { fill: var(--muted); font: 11px var(--f-mono); font-variant-numeric: tabular-nums; }
+  .axis text.year { fill: var(--ink-2); font-weight: 500; }
   .baseline { stroke: var(--axis); stroke-width: 1; }
-  .series-line { fill: none; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
-  .series-dot { stroke: var(--surface-1); stroke-width: 2; }
-  .direct-label { fill: var(--text-secondary); font-size: 12px; font-weight: 600; }
-  .crosshair { stroke: var(--text-muted); stroke-width: 1; }
-  .empty-note { fill: var(--text-muted); font-size: 13px; }
-
-  .legend { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 8px; color: var(--text-secondary); font-size: 13px; }
-  .legend span { display: inline-flex; align-items: center; gap: 6px; }
-  .legend i { display: inline-block; width: 16px; height: 2px; border-radius: 1px; }
+  .strip-label { fill: var(--muted); font: 500 10px var(--f-mono); letter-spacing: 0.06em; text-transform: uppercase; }
+  .line { fill: none; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+  .end-dot { stroke: var(--surface); stroke-width: 2; }
+  .end-label { font: 600 12px var(--f-mono); fill: var(--ink); font-variant-numeric: tabular-nums; }
+  .end-label tspan { font-family: var(--f-body); font-weight: 400; fill: var(--ink-2); }
+  .crosshair { stroke: var(--ink-2); stroke-width: 1; stroke-dasharray: 2 3; }
+  .hover-dot { stroke: var(--surface); stroke-width: 2; }
 
   .tooltip {
-    position: absolute; pointer-events: none; z-index: 2;
-    background: var(--surface-1); border: 1px solid var(--border); border-radius: 8px;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
-    padding: 8px 10px; font-size: 13px; min-width: 140px; display: none;
+    position: absolute; top: 0; left: 0; pointer-events: none; z-index: 3;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 8px; box-shadow: var(--shadow);
+    padding: 10px 12px; min-width: 200px; font-size: 13px;
   }
-  .tooltip .tt-date { color: var(--text-secondary); margin-bottom: 4px; }
-  .tooltip .tt-row { display: flex; align-items: center; gap: 8px; }
-  .tooltip .tt-row i { width: 12px; height: 2px; border-radius: 1px; flex: none; }
-  .tooltip .tt-row b { font-variant-numeric: tabular-nums; }
-  .tooltip .tt-row span { color: var(--text-secondary); }
+  .tooltip .tt-head { font-weight: 600; margin-bottom: 6px; }
+  .tooltip .tt-row { display: grid; grid-template-columns: 14px auto 1fr; align-items: center; gap: 0 8px; padding: 2px 0; }
+  .tooltip .tt-row i { width: 12px; height: 3px; border-radius: 2px; }
+  .tooltip .tt-row b { font: 600 14px var(--f-mono); font-variant-numeric: tabular-nums; }
+  .tooltip .tt-row span { color: var(--ink-2); white-space: nowrap; }
+  .chart-note { color: var(--muted); font-size: 12px; margin: 8px 12px 2px 16px; }
 
-  table { width: 100%; border-collapse: collapse; font-size: 14px; }
-  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--grid); vertical-align: top; }
-  th { color: var(--text-secondary); font-weight: 600; font-size: 13px; }
-  td.num { text-align: right; font-variant-numeric: tabular-nums; }
-  th.num { text-align: right; }
-  .table-scroll { overflow-x: auto; }
-  td .note { color: var(--text-muted); font-size: 12px; }
-
-  .callout {
-    color: var(--text-secondary); font-size: 14px;
-    border-left: 3px solid var(--axis); padding: 4px 0 4px 12px; margin: 0;
+  /* Milestones */
+  .timeline { list-style: none; margin: 0; padding: 0; display: grid; }
+  .timeline li {
+    display: grid; grid-template-columns: 92px 16px minmax(0, 1fr); gap: 0 14px; align-items: start;
+    padding-block: 12px; border-bottom: 1px solid var(--line);
   }
-  code { font-size: 13px; }
+  .timeline li:first-child { border-top: 1px solid var(--line); }
+  .timeline time { font: 500 13px/1.5 var(--f-mono); color: var(--ink-2); }
+  .timeline .dot { width: 10px; height: 10px; border-radius: 50%; margin-top: 6px; justify-self: center; }
+  .timeline .what { font-weight: 500; }
+  .timeline .detail { color: var(--muted); font-size: 13px; }
+
+  /* Table */
+  .table-scroll { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
+  table { border-collapse: collapse; width: 100%; min-width: 640px; font-size: 14px; }
+  th, td { padding: 8px 12px; text-align: right; white-space: nowrap; }
+  th:first-child, td:first-child { text-align: left; }
+  thead th { font: 500 11px var(--f-mono); letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); border-bottom: 1px solid var(--line); }
+  thead tr:first-child th { padding-bottom: 2px; color: var(--ink-2); }
+  thead tr:first-child th span { display: inline-flex; align-items: center; gap: 6px; }
+  thead tr:first-child th i { width: 12px; height: 3px; border-radius: 2px; }
+  thead tr:first-child th { border-bottom: 0; }
+  tbody td { font-family: var(--f-mono); font-variant-numeric: tabular-nums; border-bottom: 1px solid var(--line); }
+  tbody td:first-child { font-family: var(--f-body); color: var(--ink-2); }
+  tbody tr:last-child td { border-bottom: 0; }
+  td.g { color: var(--muted); }
+  td.g.played { color: var(--ink); font-weight: 500; }
+  td.rating { font-weight: 500; }
+  th.grp, td.grp { border-left: 1px solid var(--line); }
+  tbody tr.year-start td { border-top: 2px solid var(--axis); }
+
+  footer { margin-top: 48px; color: var(--muted); font-size: 13px; display: grid; gap: 6px; max-width: 72ch; }
+  footer a { color: var(--ink-2); }
+
+  @media (max-width: 720px) {
+    .hero { grid-template-columns: minmax(0, 1fr); padding-block: 28px 20px; }
+    .headline { text-align: left; }
+    .controls { grid-template-columns: minmax(0, 1fr); }
+    .ranks { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+    .rank .n { font-size: 20px; }
+    .timeline li { grid-template-columns: 76px 12px minmax(0, 1fr); gap: 0 10px; }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .line { transition: opacity 0.2s; }
+  }
 </style>
 </head>
 <body>
-<main>
-  <h1 id="title">Elo progression</h1>
-  <p class="sub" id="subtitle"></p>
+<div class="page">
+  <div class="board-edge" aria-hidden="true"></div>
 
-  <div class="filters" role="group" aria-label="Rating type" id="filters"></div>
-
-  <div class="tiles" id="tiles"></div>
-
-  <section class="card">
-    <h2 id="chart-title">Rating over time</h2>
-    <div class="chart-wrap" id="chart-wrap">
-      <svg id="chart" role="img" aria-labelledby="chart-title"></svg>
-      <div class="tooltip" id="tooltip" role="status"></div>
+  <header class="hero">
+    <div>
+      <div class="eyebrow">FIDE rating progression</div>
+      <h1 id="name">Iustin-Alex Neagu</h1>
+      <div class="meta" id="meta"></div>
     </div>
-    <div class="legend" id="legend"></div>
+    <div class="headline">
+      <div class="eyebrow">Standard Elo</div>
+      <div class="big" id="hero-rating">—</div>
+      <div class="caption" id="hero-caption"></div>
+    </div>
+  </header>
+
+  <p class="summary" id="summary"></p>
+
+  <div class="controls" id="controls"></div>
+  <div class="ranks" id="ranks"></div>
+
+  <section aria-labelledby="h-history">
+    <div class="sec-head">
+      <h2 id="h-history">Rating history</h2>
+      <p id="history-sub"></p>
+    </div>
+    <div class="filters">
+      <div class="seg" role="group" aria-label="Time range" id="ranges"></div>
+      <div class="toggles" role="group" aria-label="Time controls shown" id="toggles"></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-wrap" id="chart-wrap">
+        <svg class="chart" id="chart" role="img" aria-label="Stepped line chart of standard, rapid and blitz FIDE ratings by monthly list, with games rated per list below."></svg>
+        <div class="tooltip" id="tooltip" hidden></div>
+      </div>
+      <p class="chart-note">FIDE publishes a list on the first of each month; a rating holds until the next list, so lines step. Bars show rated games counted in each list. Hover or use arrow keys for details.</p>
+    </div>
   </section>
 
-  <section class="card">
-    <h2>All rating entries</h2>
+  <section aria-labelledby="h-milestones">
+    <div class="sec-head">
+      <h2 id="h-milestones">Milestones</h2>
+      <p>Firsts, new hundreds and the biggest swings</p>
+    </div>
+    <ol class="timeline" id="timeline"></ol>
+  </section>
+
+  <section aria-labelledby="h-lists">
+    <div class="sec-head">
+      <h2 id="h-lists">Every rating list</h2>
+      <p id="lists-sub"></p>
+    </div>
     <div class="table-scroll">
       <table>
-        <thead><tr><th>Date</th><th>Type</th><th class="num">Rating</th><th class="num">Change</th><th>Source</th></tr></thead>
+        <thead>
+          <tr>
+            <th></th>
+            <th class="grp" colspan="3"><span><i style="background:var(--s-standard)"></i>Standard</span></th>
+            <th class="grp" colspan="3"><span><i style="background:var(--s-rapid)"></i>Rapid</span></th>
+            <th class="grp" colspan="3"><span><i style="background:var(--s-blitz)"></i>Blitz</span></th>
+          </tr>
+          <tr>
+            <th>List</th>
+            <th class="grp">Elo</th><th>±</th><th>Gms</th>
+            <th class="grp">Elo</th><th>±</th><th>Gms</th>
+            <th class="grp">Elo</th><th>±</th><th>Gms</th>
+          </tr>
+        </thead>
         <tbody id="rows"></tbody>
       </table>
     </div>
   </section>
 
-  <p class="callout" id="callout"></p>
-</main>
+  <footer id="footer"></footer>
+</div>
 
 <script src="data/ratings.js"></script>
 <script>
 (function () {
-  const DATA = window.ELO_DATA || { player: {}, entries: [] };
-  const TYPES = [
-    { key: "standard", label: "Standard", color: "var(--series-standard)" },
-    { key: "rapid",    label: "Rapid",    color: "var(--series-rapid)" },
-    { key: "blitz",    label: "Blitz",    color: "var(--series-blitz)" },
-  ];
-  const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  "use strict";
+  const D = window.ELO_DATA;
   const SVG_NS = "http://www.w3.org/2000/svg";
+  const MON = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  const MONTH = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+  const SERIES = [
+    { k: "standard", label: "Standard", color: "var(--s-standard)", icon: "M3 3h8v8H3zM11 11h8v8h-8z" },
+    { k: "rapid",    label: "Rapid",    color: "var(--s-rapid)",    icon: "clock" },
+    { k: "blitz",    label: "Blitz",    color: "var(--s-blitz)",    icon: "M13 2 5 13h6l-1 9 8-12h-6z" },
+  ];
 
-  function parseDate(s) {
-    const [y, m, d] = String(s).split("-").map(Number);
-    return new Date(y, (m || 1) - 1, d || 1);
-  }
-  function fmtDate(e) {
-    const dt = e.t;
-    const parts = String(e.date).split("-");
-    return parts.length >= 3
-      ? `${dt.getDate()} ${MONTHS[dt.getMonth()]} ${dt.getFullYear()}`
-      : `${MONTHS[dt.getMonth()]} ${dt.getFullYear()}`;
-  }
-  function el(tag, attrs, text) {
+  // ---------- data ----------
+  const rows = D.lists
+    .map(([period, s, sg, r, rg, b, bg]) => ({
+      period, standard: s, rapid: r, blitz: b,
+      games: { standard: sg || 0, rapid: rg || 0, blitz: bg || 0 },
+    }))
+    .sort((a, b) => a.period.localeCompare(b.period));
+  rows.forEach((r, i) => { r.i = i; });
+  const inactive = new Set(D.inactive || []);
+
+  const ym = p => { const [y, m] = p.split("-").map(Number); return { y, m: m - 1 }; };
+  const short = p => { const d = ym(p); return `${MON[d.m]} ${d.y}`; };
+  const long = p => { const d = ym(p); return `${MONTH[d.m]} ${d.y}`; };
+  const signed = n => (n > 0 ? "+" : n < 0 ? "−" : "±") + Math.abs(n);
+  const fmt = n => n.toLocaleString("en-US");
+  const deltaClass = n => (n > 0 ? "up" : n < 0 ? "down" : "");
+
+  function el(tag, attrs, ...kids) {
     const n = tag.startsWith("svg:") ? document.createElementNS(SVG_NS, tag.slice(4)) : document.createElement(tag);
-    for (const k in attrs || {}) n.setAttribute(k, attrs[k]);
-    if (text != null) n.textContent = text;
+    for (const k in attrs || {}) {
+      if (k === "style") n.style.cssText = attrs[k];
+      else if (attrs[k] != null) n.setAttribute(k, attrs[k]);
+    }
+    kids.flat().forEach(c => c != null && n.append(c.nodeType ? c : document.createTextNode(String(c))));
     return n;
   }
-  function signed(n) { return (n > 0 ? "+" : n < 0 ? "−" : "±") + Math.abs(n); }
 
-  const entries = (DATA.entries || [])
-    .filter(e => e && Number.isFinite(e.rating) && e.date)
-    .map(e => ({ ...e, type: e.type || "standard", t: parseDate(e.date) }))
-    .sort((a, b) => a.t - b.t);
-
-  const byType = {};
-  TYPES.forEach(T => { byType[T.key] = entries.filter(e => e.type === T.key); });
-  const available = TYPES.filter(T => byType[T.key].length);
-  let active = new Set(available.map(T => T.key));
-
-  // Header
-  const name = (DATA.player && DATA.player.name) || "Player";
-  document.getElementById("title").textContent = `${name} — Elo progression`;
-  document.title = `${name.split(" ")[0]} ${name.split(" ").slice(-1)[0]} Elo`;
-  const sub = document.getElementById("subtitle");
-  sub.textContent = `${entries.length} rating ${entries.length === 1 ? "entry" : "entries"}`;
-  if (entries.length) {
-    const from = fmtDate(entries[0]), to = fmtDate(entries[entries.length - 1]);
-    sub.textContent += from === to ? `, ${from}` : `, ${from} – ${to}`;
+  // Previous rated value of series k before row i (null if none).
+  function prevVal(k, i) {
+    for (let j = i - 1; j >= 0; j--) if (rows[j][k] != null) return rows[j][k];
+    return null;
   }
-  if (DATA.player && DATA.player.fideId) {
-    sub.append(" · ");
-    const a = el("a", { href: `https://ratings.fide.com/profile/${encodeURIComponent(DATA.player.fideId)}`, rel: "noopener" }, `FIDE ID ${DATA.player.fideId}`);
-    sub.append(a);
-  }
-
-  // Filters
-  const filters = document.getElementById("filters");
-  TYPES.forEach(T => {
-    const b = el("button", { type: "button", "aria-pressed": String(active.has(T.key)) }, T.label);
-    if (!byType[T.key].length) { b.disabled = true; b.title = "No entries yet"; }
-    b.addEventListener("click", () => {
-      if (active.has(T.key)) { if (active.size > 1) active.delete(T.key); }
-      else active.add(T.key);
-      filters.querySelectorAll("button").forEach((btn, i) => btn.setAttribute("aria-pressed", String(active.has(TYPES[i].key))));
-      render();
-    });
-    filters.append(b);
+  const stats = {};
+  SERIES.forEach(S => {
+    const rated = rows.filter(r => r[S.k] != null);
+    if (!rated.length) return;
+    const first = rated[0], last = rated[rated.length - 1];
+    const peak = rated.reduce((a, b) => (b[S.k] > a[S.k] ? b : a));
+    const prev = prevVal(S.k, last.i);
+    let lastChange = null; // most recent list where the rating moved
+    for (let j = rated.length - 1; j > 0; j--) {
+      if (rated[j][S.k] !== rated[j - 1][S.k]) { lastChange = rated[j]; break; }
+    }
+    const games = rows.reduce((n, r) => n + r.games[S.k], 0);
+    stats[S.k] = { first, last, peak, prev, lastChange, games, current: last[S.k] };
   });
 
-  // Tiles: the primary series is the first active type with data.
-  function renderTiles() {
-    const box = document.getElementById("tiles");
-    box.replaceChildren();
-    const T = TYPES.find(T => active.has(T.key) && byType[T.key].length);
-    if (!T) return;
-    const s = byType[T.key];
-    const first = s[0], last = s[s.length - 1];
-    const peak = s.reduce((a, b) => (b.rating > a.rating ? b : a));
-    const tiles = [
-      { label: `Current ${T.label.toLowerCase()}`, value: last.rating, meta: fmtDate(last) },
-      { label: "Peak", value: peak.rating, meta: fmtDate(peak) },
-      { label: "Total change", value: s.length > 1 ? signed(last.rating - first.rating) : "—",
-        meta: s.length > 1 ? `since ${fmtDate(first)}` : "needs 2+ entries",
-        cls: last.rating > first.rating ? "delta-up" : last.rating < first.rating ? "delta-down" : "" },
-      { label: "Entries", value: s.length, meta: `${T.label} list` },
-    ];
-    tiles.forEach(t => {
-      const d = el("div", { class: "tile" });
-      d.append(el("div", { class: "label" }, t.label));
-      d.append(el("div", { class: "value" + (t.cls ? " " + t.cls : "") }, String(t.value)));
-      d.append(el("div", { class: "meta" }, t.meta));
-      box.append(d);
-    });
-  }
+  // ---------- hero ----------
+  const P = D.player;
+  document.getElementById("name").textContent = P.name;
+  const meta = document.getElementById("meta");
+  [["FIDE ID", P.fideId], ["Federation", P.federation], ["Born", P.birthYear], ["Title", P.title || "None"]]
+    .forEach(([k, v]) => v != null && meta.append(el("span", {}, `${k} `, el("b", {}, String(v)))));
 
-  // Chart
+  const std = stats.standard;
+  document.getElementById("hero-rating").textContent = std.current;
+  const cap = document.getElementById("hero-caption");
+  cap.append(
+    el("b", { class: deltaClass(std.current - std.prev) }, signed(std.current - std.prev)),
+    ` on the ${short(D.asOf)} list · `,
+    el("b", {}, signed(std.current - std.first.standard)),
+    ` since ${short(std.first.period)}`
+  );
+
+  // Last 12 lists
+  const last12 = rows.slice(-13);
+  const s12 = last12[last12.length - 1].standard - last12[0].standard;
+  const g12 = rows.slice(-12).reduce((n, r) => n + r.games.standard, 0);
+  const summary = document.getElementById("summary");
+  summary.append(
+    "Over the last 12 rating lists his standard rating rose ",
+    el("b", {}, `${signed(s12)} points`), ` (${last12[0].standard} → ${last12[last12.length - 1].standard}) across `,
+    el("b", {}, `${g12} rated games`),
+    `. The ${short(D.asOf)} list is his career high in standard`,
+    stats.rapid && stats.rapid.current === stats.rapid.peak.rapid ? " and rapid." : "."
+  );
+
+  // Time-control cards
+  const controls = document.getElementById("controls");
+  function icon(S) {
+    const svg = el("svg:svg", { viewBox: "0 0 22 22", "aria-hidden": "true" });
+    if (S.icon === "clock") {
+      svg.append(el("svg:circle", { cx: 11, cy: 11, r: 8.5, fill: "none", stroke: "currentColor", "stroke-width": 2 }));
+      svg.append(el("svg:path", { d: "M11 6.5V11l3 2", fill: "none", stroke: "currentColor", "stroke-width": 2, "stroke-linecap": "round" }));
+    } else if (S.k === "standard") {
+      svg.append(el("svg:rect", { x: 2, y: 2, width: 18, height: 18, fill: "none", stroke: "currentColor", "stroke-width": 2 }));
+      svg.append(el("svg:path", { d: "M3 3h8v8H3zM11 11h8v8h-8z", fill: "currentColor" }));
+    } else {
+      svg.append(el("svg:path", { d: S.icon, fill: "none", stroke: "currentColor", "stroke-width": 2, "stroke-linejoin": "round" }));
+    }
+    return svg;
+  }
+  SERIES.forEach(S => {
+    const st = stats[S.k];
+    if (!st) return;
+    const d = st.current - st.prev;
+    const card = el("article", { class: "tc" },
+      el("header", {}, icon(S), S.label, inactive.has(S.k) ? el("span", { class: "pill" }, "Inactive") : null,
+        el("i", { style: `background:${S.color}` })),
+      el("div", { class: "val" }, String(st.current)),
+      el("div", { class: "sub" },
+        el("span", {}, d ? el("span", { class: deltaClass(d) }, signed(d)) : "No change", " this list"),
+        el("span", {}, `Peak ${st.peak[S.k]} · ${short(st.peak.period)}`),
+        el("span", {}, `${st.games} games rated`)
+      )
+    );
+    controls.append(card);
+  });
+
+  // Ranks
+  const ranks = document.getElementById("ranks");
+  Object.values(D.ranks || {}).forEach(r => {
+    ranks.append(el("div", { class: "rank" },
+      el("div", { class: "eyebrow" }, r.label),
+      el("div", { class: "n" }, `#${fmt(r.active)}`),
+      el("div", { class: "of" }, `among active players · #${fmt(r.all)} overall`)
+    ));
+  });
+
+  // ---------- chart ----------
+  const RANGES = [{ k: "1y", label: "1Y", n: 13 }, { k: "2y", label: "2Y", n: 25 }, { k: "all", label: "All", n: Infinity }];
+  let range = "all";
+  const shown = new Set(SERIES.map(S => S.k));
+
+  const ranges = document.getElementById("ranges");
+  RANGES.forEach(R => {
+    const b = el("button", { type: "button", id: `range-${R.k}`, "aria-pressed": String(R.k === range) }, R.label);
+    b.addEventListener("click", () => {
+      range = R.k;
+      ranges.querySelectorAll("button").forEach((x, i) => x.setAttribute("aria-pressed", String(RANGES[i].k === range)));
+      drawChart();
+    });
+    ranges.append(b);
+  });
+  const toggles = document.getElementById("toggles");
+  SERIES.forEach(S => {
+    const b = el("button", { type: "button", class: "toggle", id: `toggle-${S.k}`, "aria-pressed": "true" },
+      el("i", { style: `background:${S.color}` }), S.label);
+    b.addEventListener("click", () => {
+      if (shown.has(S.k)) { if (shown.size > 1) shown.delete(S.k); } else shown.add(S.k);
+      b.setAttribute("aria-pressed", String(shown.has(S.k)));
+      drawChart();
+    });
+    toggles.append(b);
+  });
+
   const svg = document.getElementById("chart");
   const wrap = document.getElementById("chart-wrap");
   const tip = document.getElementById("tooltip");
+  let hoverIdx = null;
 
-  function niceStep(range) {
-    const raw = range / 5;
-    const pow = Math.pow(10, Math.floor(Math.log10(raw)));
-    const n = raw / pow;
-    return (n < 1.5 ? 1 : n < 3 ? 2 : n < 7 ? 5 : 10) * pow;
-  }
-
-  function renderChart() {
-    const W = Math.max(320, wrap.clientWidth), H = W < 560 ? 260 : 340;
-    const M = { top: 16, right: W < 560 ? 64 : 88, bottom: 28, left: 44 };
+  function drawChart() {
+    const W = Math.max(300, Math.round(wrap.clientWidth));
+    const narrow = W < 560;
+    const M = { left: 44, right: narrow ? 46 : 118, top: 12 };
+    const mainH = narrow ? 230 : 320, gapH = 34, stripH = narrow ? 46 : 60, axisH = 24;
+    const H = M.top + mainH + gapH + stripH + axisH;
     svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
     svg.replaceChildren();
 
-    const shown = TYPES.filter(T => active.has(T.key) && byType[T.key].length);
-    const pts = shown.flatMap(T => byType[T.key]);
-    if (!pts.length) {
-      svg.append(el("svg:text", { x: W / 2, y: H / 2, "text-anchor": "middle", class: "empty-note" }, "No rating entries yet — add them to data/ratings.js"));
-      return;
-    }
+    const R = RANGES.find(r => r.k === range);
+    const view = rows.slice(-Math.min(R.n, rows.length));
+    const SS = SERIES.filter(S => shown.has(S.k));
+    const n = view.length;
+    document.getElementById("history-sub").textContent =
+      `${short(view[0].period)} – ${short(view[n - 1].period)} · ${n} lists`;
 
-    // Domains (padded so a single point still sits mid-chart)
-    let t0 = Math.min(...pts.map(p => +p.t)), t1 = Math.max(...pts.map(p => +p.t));
-    const DAY = 864e5;
-    if (t1 - t0 < 60 * DAY) { t0 -= 180 * DAY; t1 += 180 * DAY; }
-    let r0 = Math.min(...pts.map(p => p.rating)), r1 = Math.max(...pts.map(p => p.rating));
-    if (r1 - r0 < 100) { const mid = (r0 + r1) / 2; r0 = mid - 100; r1 = mid + 100; }
-    const step = niceStep(r1 - r0);
-    r0 = Math.floor(r0 / step) * step; r1 = Math.ceil(r1 / step) * step;
+    const plotW = W - M.left - M.right;
+    const x = j => M.left + (n === 1 ? plotW / 2 : (j / (n - 1)) * plotW);
 
-    const x = t => M.left + (t - t0) / (t1 - t0) * (W - M.left - M.right);
-    const y = r => M.top + (1 - (r - r0) / (r1 - r0)) * (H - M.top - M.bottom);
+    // y domain
+    const vals = view.flatMap(r => SS.map(S => r[S.k])).filter(v => v != null);
+    let lo = Math.min(...vals), hi = Math.max(...vals);
+    const step = hi - lo > 700 ? 200 : 100;
+    lo = Math.floor((lo - 20) / step) * step; hi = Math.ceil((hi + 20) / step) * step;
+    const yTop = M.top, yBot = M.top + mainH;
+    const y = v => yBot - ((v - lo) / (hi - lo)) * mainH;
 
-    // Grid + y axis
     const grid = el("svg:g", { class: "grid" }), axis = el("svg:g", { class: "axis" });
-    for (let r = r0; r <= r1 + 1e-9; r += step) {
-      if (r > r0) grid.append(el("svg:line", { x1: M.left, x2: W - M.right, y1: y(r), y2: y(r) }));
-      axis.append(el("svg:text", { x: M.left - 8, y: y(r) + 4, "text-anchor": "end" }, String(r)));
+    for (let v = lo; v <= hi; v += step) {
+      if (v > lo) grid.append(el("svg:line", { x1: M.left, x2: W - M.right, y1: y(v), y2: y(v) }));
+      axis.append(el("svg:text", { x: M.left - 8, y: y(v) + 4, "text-anchor": "end" }, String(v)));
     }
-    // X ticks: years, or months if span is short
-    const span = (t1 - t0) / DAY;
-    const d0 = new Date(t0), ticks = [];
-    if (span > 540) {
-      for (let yr = d0.getFullYear(); ; yr++) { const t = +new Date(yr, 0, 1); if (t > t1) break; if (t >= t0) ticks.push([t, String(yr)]); }
-    } else {
-      const every = span > 270 ? 3 : 2;
-      for (let d = new Date(d0.getFullYear(), d0.getMonth() + 1, 1); +d <= t1; d = new Date(d.getFullYear(), d.getMonth() + every, 1))
-        ticks.push([+d, `${MONTHS[d.getMonth()]} ${String(d.getFullYear()).slice(2)}`]);
-    }
-    ticks.forEach(([t, label]) => axis.append(el("svg:text", { x: x(t), y: H - 8, "text-anchor": "middle" }, label)));
     svg.append(grid);
-    svg.append(el("svg:line", { class: "baseline", x1: M.left, x2: W - M.right, y1: H - M.bottom, y2: H - M.bottom }));
+    svg.append(el("svg:line", { class: "baseline", x1: M.left, x2: W - M.right, y1: yBot, y2: yBot }));
+
+    // x ticks
+    const xTickY = yBot + gapH + stripH + 17;
+    let lastTickX = -Infinity;
+    view.forEach((r, j) => {
+      const d = ym(r.period);
+      let label = null, cls = null;
+      if (d.m === 0) { label = String(d.y); cls = "year"; }
+      else if (n <= 25 && d.m % 3 === 0 && !narrow) label = MON[d.m];
+      else if (n <= 13 && d.m % 2 === 0 && narrow) label = MON[d.m];
+      if (j === 0 && d.m !== 0 && n > 13) { label = String(d.y); cls = "year"; }
+      if (label && x(j) - lastTickX < 40) {
+        if (j === 0 || cls !== "year") label = null;
+        else axis.lastChild.remove(); // a year label wins over a crowded neighbour
+      }
+      if (label) lastTickX = x(j);
+      if (label) axis.append(el("svg:text", { x: x(j), y: xTickY, "text-anchor": j === 0 ? "start" : "middle", class: cls }, label));
+    });
+
+    // stepped lines
+    SS.forEach(S => {
+      let d = "", pen = false;
+      view.forEach((r, j) => {
+        const v = r[S.k];
+        if (v == null) { pen = false; return; }
+        if (!pen) { d += `M${x(j).toFixed(1)},${y(v).toFixed(1)}`; pen = true; }
+        else d += `H${x(j).toFixed(1)}V${y(v).toFixed(1)}`;
+      });
+      svg.append(el("svg:path", { class: "line", d, stroke: S.color }));
+    });
+
+    // end dots + direct labels (nudged apart)
+    const ends = SS.map(S => {
+      const r = [...view].reverse().find(r => r[S.k] != null);
+      return r ? { S, v: r[S.k], j: view.indexOf(r) } : null;
+    }).filter(Boolean).sort((a, b) => y(a.v) - y(b.v));
+    let lastY = -Infinity;
+    ends.forEach(e => {
+      e.ly = Math.max(y(e.v) + 4, lastY + 15);
+      lastY = e.ly;
+    });
+    ends.forEach(e => {
+      svg.append(el("svg:circle", { class: "end-dot", cx: x(e.j), cy: y(e.v), r: 4.5, fill: e.S.color }));
+      const t = el("svg:text", { class: "end-label", x: x(e.j) + 10, y: e.ly }, String(e.v));
+      if (!narrow) t.append(el("svg:tspan", { dx: 6 }, e.S.label));
+      svg.append(t);
+    });
+
+    // games strip
+    const sTop = yBot + gapH, sBot = sTop + stripH;
+    svg.append(el("svg:text", { class: "strip-label", x: M.left, y: sTop - 8 }, "Games rated"));
+    const gMax = Math.max(1, ...view.map(r => SS.reduce((s, S) => s + r.games[S.k], 0)));
+    const gy = g => (g / gMax) * stripH;
+    const bw = Math.max(3, Math.min(14, (plotW / Math.max(1, n - 1)) * 0.6));
+    view.forEach((r, j) => {
+      let top = sBot;
+      SS.forEach(S => {
+        const g = r.games[S.k];
+        if (!g) return;
+        const h = Math.max(2, gy(g) - 2);
+        top -= h;
+        svg.append(el("svg:rect", { x: x(j) - bw / 2, y: top, width: bw, height: h, rx: 1.5, fill: S.color }));
+        top -= 2;
+      });
+    });
+    svg.append(el("svg:line", { class: "baseline", x1: M.left, x2: W - M.right, y1: sBot, y2: sBot }));
+    axis.append(el("svg:text", { x: M.left - 8, y: sTop + 4, "text-anchor": "end" }, String(gMax)));
+    axis.append(el("svg:text", { x: M.left - 8, y: sBot + 4, "text-anchor": "end" }, "0"));
     svg.append(axis);
 
-    // Series
-    const labelYs = [];
-    shown.forEach(T => {
-      const s = byType[T.key];
-      const g = el("svg:g");
-      if (s.length > 1) {
-        g.append(el("svg:path", {
-          class: "series-line", stroke: T.color,
-          d: s.map((p, i) => `${i ? "L" : "M"}${x(+p.t).toFixed(1)},${y(p.rating).toFixed(1)}`).join(""),
-        }));
-      }
-      s.forEach((p, i) => {
-        const isEnd = i === s.length - 1;
-        if (s.length <= 24 || isEnd) g.append(el("svg:circle", { class: "series-dot", cx: x(+p.t), cy: y(p.rating), r: isEnd ? 5 : 3.5, fill: T.color }));
-      });
-      // Direct label at the series end, nudged to avoid overlaps
-      const last = s[s.length - 1];
-      let ly = y(last.rating) + 4;
-      while (labelYs.some(v => Math.abs(v - ly) < 14)) ly += 14;
-      labelYs.push(ly);
-      g.append(el("svg:text", { class: "direct-label", x: x(+last.t) + 10, y: ly }, `${last.rating}`));
-      svg.append(g);
+    // hover layer
+    const cross = el("svg:line", { class: "crosshair", y1: yTop, y2: sBot, visibility: "hidden" });
+    const hoverDots = el("svg:g");
+    svg.append(cross, hoverDots);
+    const hit = el("svg:rect", {
+      x: M.left - 16, y: 0, width: plotW + 32, height: H, fill: "transparent", tabindex: "0",
+      "aria-label": "Rating history. Use left and right arrow keys to step through rating lists.",
     });
-
-    // Hover layer: crosshair snaps to nearest observation date
-    const dates = [...new Set(pts.map(p => +p.t))].sort((a, b) => a - b);
-    const cross = el("svg:line", { class: "crosshair", y1: M.top, y2: H - M.bottom, visibility: "hidden" });
-    svg.append(cross);
-    const hit = el("svg:rect", { x: M.left - 12, y: 0, width: W - M.left - M.right + 24, height: H, fill: "transparent", tabindex: "0", "aria-label": "Chart data; use arrow keys to step through dates" });
     svg.append(hit);
-    let idx = dates.length - 1;
 
-    function show(i) {
-      idx = Math.max(0, Math.min(dates.length - 1, i));
-      const t = dates[idx], cx = x(t);
+    function show(j) {
+      j = Math.max(0, Math.min(n - 1, j));
+      hoverIdx = j;
+      const r = view[j], cx = x(j);
       cross.setAttribute("x1", cx); cross.setAttribute("x2", cx); cross.setAttribute("visibility", "visible");
-      tip.replaceChildren();
-      const atDate = pts.filter(p => +p.t === t);
-      tip.append(el("div", { class: "tt-date" }, fmtDate(atDate[0])));
-      shown.forEach(T => {
-        const p = atDate.find(p => p.type === T.key);
-        if (!p) return;
-        const row = el("div", { class: "tt-row" });
-        const key = el("i"); key.style.background = T.color;
-        const prev = byType[T.key][byType[T.key].indexOf(p) - 1];
-        row.append(key, el("b", {}, String(p.rating)), el("span", {}, T.label + (prev ? ` (${signed(p.rating - prev.rating)})` : "")));
-        tip.append(row);
-        if (p.note) tip.append(el("div", { class: "tt-date" }, p.note));
+      hoverDots.replaceChildren();
+      tip.replaceChildren(el("div", { class: "tt-head" }, `${long(r.period)} list`));
+      SS.forEach(S => {
+        const v = r[S.k];
+        if (v == null) return;
+        hoverDots.append(el("svg:circle", { class: "hover-dot", cx, cy: y(v), r: 4, fill: S.color }));
+        const p = prevVal(S.k, r.i), d = p == null ? null : v - p, g = r.games[S.k];
+        tip.append(el("div", { class: "tt-row" },
+          el("i", { style: `background:${S.color}` }),
+          el("b", {}, String(v)),
+          el("span", {},
+            S.label,
+            d == null ? " · first list" : d ? el("span", { class: deltaClass(d) }, ` ${signed(d)}`) : "",
+            g ? ` · ${g} game${g === 1 ? "" : "s"}` : "")
+        ));
       });
-      tip.style.display = "block";
+      tip.hidden = false;
       const scale = wrap.clientWidth / W;
-      const left = cx * scale + 12, tw = tip.offsetWidth;
-      const flipped = left + tw > wrap.clientWidth ? cx * scale - tw - 12 : left;
-      tip.style.left = Math.max(0, Math.min(flipped, wrap.clientWidth - tw)) + "px";
-      tip.style.top = (M.top * scale) + "px";
+      const tw = tip.offsetWidth, px = cx * scale;
+      let left = px + 14;
+      if (left + tw > wrap.clientWidth) left = px - tw - 14;
+      tip.style.left = Math.max(0, Math.min(left, wrap.clientWidth - tw)) + "px";
+      tip.style.top = Math.round(M.top * scale) + "px";
     }
-    function hide() { cross.setAttribute("visibility", "hidden"); tip.style.display = "none"; }
-    hit.addEventListener("pointermove", ev => {
-      const r = svg.getBoundingClientRect();
-      const px = (ev.clientX - r.left) * (W / r.width);
-      let best = 0;
-      dates.forEach((t, i) => { if (Math.abs(x(t) - px) < Math.abs(x(dates[best]) - px)) best = i; });
-      show(best);
-    });
+    function hide() { hoverIdx = null; cross.setAttribute("visibility", "hidden"); hoverDots.replaceChildren(); tip.hidden = true; }
+    const nearest = ev => {
+      const b = svg.getBoundingClientRect();
+      const px = (ev.clientX - b.left) * (W / b.width);
+      return Math.round(((px - M.left) / plotW) * (n - 1));
+    };
+    hit.addEventListener("pointermove", ev => show(nearest(ev)));
+    hit.addEventListener("pointerdown", ev => show(nearest(ev)));
     hit.addEventListener("pointerleave", hide);
-    hit.addEventListener("focus", () => show(idx));
+    hit.addEventListener("focus", () => show(hoverIdx == null ? n - 1 : hoverIdx));
     hit.addEventListener("blur", hide);
     hit.addEventListener("keydown", ev => {
-      if (ev.key === "ArrowLeft") { show(idx - 1); ev.preventDefault(); }
-      if (ev.key === "ArrowRight") { show(idx + 1); ev.preventDefault(); }
-    });
-
-    // Legend (only when more than one series is shown)
-    const legend = document.getElementById("legend");
-    legend.replaceChildren();
-    if (shown.length > 1) shown.forEach(T => {
-      const s = el("span"); const i = el("i"); i.style.background = T.color;
-      s.append(i, document.createTextNode(T.label)); legend.append(s);
+      if (ev.key === "ArrowLeft") { show((hoverIdx ?? n) - 1); ev.preventDefault(); }
+      else if (ev.key === "ArrowRight") { show((hoverIdx ?? -1) + 1); ev.preventDefault(); }
+      else if (ev.key === "Escape") hide();
     });
   }
 
-  function renderTable() {
+  // ---------- milestones ----------
+  function milestones() {
+    const ev = new Map(); // key period|series -> {period, S, parts[], detail[]}
+    const add = (r, S, what, detail) => {
+      const key = `${r.period}|${S.k}`;
+      if (!ev.has(key)) ev.set(key, { period: r.period, S, what: [], detail: [] });
+      const e = ev.get(key);
+      e.what.push(what);
+      if (detail) e.detail.push(detail);
+    };
+    let bigGain = null, bigDrop = null;
+    SERIES.forEach(S => {
+      let best = null, prev = null;
+      rows.forEach(r => {
+        const v = r[S.k];
+        if (v == null) return;
+        const g = r.games[S.k];
+        const gamesTxt = g ? `${g} game${g === 1 ? "" : "s"} in this list` : null;
+        if (prev == null) add(r, S, `First ${S.label.toLowerCase()} rating: ${v}`, gamesTxt);
+        else {
+          const d = v - prev;
+          if (d && (!bigGain || d > bigGain.d)) bigGain = { r, S, d, v, prev };
+          if (d && (!bigDrop || d < bigDrop.d)) bigDrop = { r, S, d, v, prev };
+          if (v > best && Math.floor(v / 100) > Math.floor(best / 100)) {
+            add(r, S, `${S.label} passes ${Math.floor(v / 100) * 100}: ${v}`,
+              [`${signed(d)} from ${prev}`, gamesTxt].filter(Boolean).join(" · "));
+          }
+        }
+        if (best == null || v > best) best = v;
+        prev = v;
+      });
+    });
+    if (bigGain) add(bigGain.r, bigGain.S, `Biggest single-list gain (${signed(bigGain.d)})`);
+    if (bigDrop && bigDrop.d < 0) add(bigDrop.r, bigDrop.S, `${bigDrop.S.label} falls to ${bigDrop.v}`,
+      `${signed(bigDrop.d)} from ${bigDrop.prev}, the largest drop on record`);
+    SERIES.forEach(S => {
+      const st = stats[S.k];
+      if (st && st.peak === st.last && st.current !== st.first[S.k]) add(st.last, S, `${S.label} career high`);
+    });
+
+    const list = [...ev.values()].sort((a, b) => a.period.localeCompare(b.period) || SERIES.indexOf(a.S) - SERIES.indexOf(b.S));
+    const ol = document.getElementById("timeline");
+    list.forEach(e => {
+      ol.append(el("li", {},
+        el("time", { datetime: e.period }, short(e.period)),
+        el("span", { class: "dot", style: `background:${e.S.color}`, "aria-hidden": "true" }),
+        el("div", {},
+          el("div", { class: "what" }, e.what.join(" · ")),
+          e.detail.length ? el("div", { class: "detail" }, e.detail.join(" · ")) : null)
+      ));
+    });
+  }
+
+  // ---------- table ----------
+  function table() {
     const body = document.getElementById("rows");
-    body.replaceChildren();
-    const rows = entries.filter(e => active.has(e.type)).slice().reverse();
-    rows.forEach(e => {
-      const s = byType[e.type], prev = s[s.indexOf(e) - 1];
-      const tr = el("tr");
-      tr.append(el("td", {}, fmtDate(e)));
-      tr.append(el("td", {}, (TYPES.find(T => T.key === e.type) || { label: e.type }).label));
-      tr.append(el("td", { class: "num" }, String(e.rating)));
-      const d = prev ? e.rating - prev.rating : null;
-      tr.append(el("td", { class: "num" + (d > 0 ? " delta-up" : d < 0 ? " delta-down" : "") }, d == null ? "—" : signed(d)));
-      const src = el("td", {}, e.source || "");
-      if (e.note) { src.append(el("br")); src.append(el("span", { class: "note" }, e.note)); }
-      tr.append(src);
+    document.getElementById("lists-sub").textContent = `${rows.length} monthly lists, newest first`;
+    [...rows].reverse().forEach((r, idx, arr) => {
+      const tr = el("tr", { class: idx > 0 && ym(r.period).m === 11 ? "year-start" : null });
+      tr.append(el("td", {}, short(r.period)));
+      SERIES.forEach(S => {
+        const v = r[S.k], p = prevVal(S.k, r.i), g = r.games[S.k];
+        const d = v != null && p != null ? v - p : null;
+        tr.append(el("td", { class: "grp rating" }, v == null ? "—" : String(v)));
+        tr.append(el("td", { class: d ? deltaClass(d) : "g" }, d ? signed(d) : v == null ? "" : "·"));
+        tr.append(el("td", { class: "g" + (g ? " played" : "") }, v == null && !g ? "" : String(g)));
+      });
       body.append(tr);
     });
   }
 
-  function renderCallout() {
-    const c = document.getElementById("callout");
-    const std = byType.standard.length;
-    c.textContent = std < 2
-      ? "Only one verified rating is on record so far. Add each monthly FIDE list rating to data/ratings.js and the progression line, deltas and peak fill in automatically."
-      : "Data lives in data/ratings.js — add a new entry after each FIDE rating list to extend the progression.";
-  }
+  // ---------- footer ----------
+  const foot = document.getElementById("footer");
+  foot.append(
+    el("div", {}, "Source: ",
+      el("a", { href: `https://ratings.fide.com/profile/${encodeURIComponent(P.fideId)}`, target: "_blank", rel: "noopener" }, `FIDE ratings profile ${P.fideId}`),
+      `, ${long(D.asOf)} list. Ranks are among active players on that list.`),
+    el("div", {}, "FIDE shows a blitz figure of 1105 on the October 2023 list, before any blitz games were rated; it is reproduced as published.")
+  );
 
-  function render() { renderTiles(); renderChart(); renderTable(); renderCallout(); }
-  render();
+  drawChart();
+  milestones();
+  table();
   let raf;
-  window.addEventListener("resize", () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(renderChart); });
+  window.addEventListener("resize", () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(drawChart); });
 })();
 </script>
 </body>

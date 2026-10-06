@@ -1,33 +1,42 @@
-# Iustin Alex Neagu — Elo progression
+# Iustin-Alex Neagu — FIDE Elo progression
 
-A small, dependency-free page that charts Iustin Alex Neagu's chess rating over time.
+A small static site charting the FIDE ratings of Iustin-Alex Neagu
+(FIDE ID [42230217](https://ratings.fide.com/profile/42230217), Romania, born 2010)
+across every monthly rating list since August 2023.
 
-Open `index.html` in a browser (it works straight from disk or via GitHub Pages).
+Open `index.html` in a browser. It has no build step and no dependencies besides
+Google Fonts, so it works straight from disk or on GitHub Pages.
 
-![What the page shows: current/peak/total-change tiles, a rating-over-time line chart with hover details, and a table of every entry.](#)
+## What's on the page
 
-## Current data
+- Current standard, rapid and blitz ratings with change, peak and games rated
+- National, European and world ranks among active players
+- Stepped rating chart for all three time controls, with rated games per list
+  underneath, a 1Y / 2Y / All range and per-time-control toggles
+- Milestones worked out from the data (first ratings, new hundreds, biggest swings)
+- The full list-by-list table
 
-| Date | Type | Elo | Source |
+## Where things stand (October 2026 list)
+
+| | Rating | Peak | Since first list |
 |---|---|---|---|
-| Oct 2026 | Standard | 1566 | ChessBase Players directory (listed at age 16) |
+| Standard | **1756** | 1756 (Oct 2026) | +651 from 1105 (Oct 2023) |
+| Rapid | **1657** | 1657 (Oct 2026) | +462 from 1195 (Aug 2023) |
+| Blitz (inactive) | **1449** | 1584 (Jun 2024) | +344 from 1105 (Oct 2023) |
 
-Only one verified rating is on record so far, so the chart shows a single point.
-The progression line, deltas, peak and total change appear as soon as a second
-entry is added.
+## Updating
 
-## Adding ratings
-
-Edit `data/ratings.js` and append one object per rating-list month:
+Each month, add the new FIDE list as one row in `data/ratings.js` and set
+`asOf` to that month:
 
 ```js
-{ date: "2026-11", type: "standard", rating: 1580, source: "FIDE rating list", note: "Optional event / games played" },
+//  period,   std, std games, rapid, rapid games, blitz, blitz games
+["2026-11", 1780, 6, 1657, 0, 1449, 0],
 ```
 
-- `date`: `YYYY-MM` (rating-list month) or `YYYY-MM-DD`
-- `type`: `standard`, `rapid` or `blitz` (each gets its own line and filter)
-- Entries can go in any order; the page sorts them by date.
+Use `null` where FIDE shows no rating. Everything else (cards, chart,
+milestones, table) is calculated from these rows. Update `ranks` from the
+FIDE profile's Info tab if you want those current too.
 
-The best source for the full history is the player's FIDE profile
-(`ratings.fide.com/profile/<FIDE ID>` → *Rating progress chart*). Set
-`player.fideId` in `data/ratings.js` and the page links to it.
+Data source: FIDE ratings profile, Progress tab, transcribed from the
+October 2026 list.
