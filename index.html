@@ -10,6 +10,10 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="Iustin-Alex Neagu — FIDE Elo progression">
 <meta property="og:description" content="Standard, rapid and blitz FIDE ratings across every monthly list since August 2023.">
+<meta property="og:image" content="https://ghosty52w.github.io/Iustin_IANeagu.elo/images/iustin-share.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23e4e6e1'/%3E%3Cpath d='M0 0h8v8H0zM8 8h8v8H8z' fill='%232b302d'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -109,6 +113,12 @@
   .hero h1 {
     font-size: clamp(40px, 7.4vw, 80px); line-height: 0.95; letter-spacing: -0.02em;
     font-weight: 800; font-stretch: 112%;
+  }
+  .identity { display: flex; align-items: center; gap: 24px; min-width: 0; }
+  .identity-text { min-width: 0; }
+  .portrait {
+    flex: none; width: 136px; height: 136px; border-radius: 50%; object-fit: cover;
+    background: var(--line); border: 4px solid var(--surface); box-shadow: 0 0 0 1px var(--line), var(--shadow);
   }
   .hero .meta { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 6px 16px; color: var(--ink-2); }
   .hero .meta span { white-space: nowrap; }
@@ -241,6 +251,8 @@
 
   @media (max-width: 720px) {
     .hero { grid-template-columns: minmax(0, 1fr); padding-block: 28px 20px; }
+    .identity { flex-direction: column; align-items: flex-start; gap: 16px; }
+    .portrait { width: 96px; height: 96px; border-width: 3px; }
     .headline { text-align: left; }
     .controls { grid-template-columns: minmax(0, 1fr); }
     .ranks { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
@@ -257,10 +269,13 @@
   <div class="board-edge" aria-hidden="true"></div>
 
   <header class="hero">
-    <div>
-      <div class="eyebrow">FIDE rating progression</div>
-      <h1 id="name">Iustin-Alex Neagu</h1>
-      <div class="meta" id="meta"></div>
+    <div class="identity">
+      <img class="portrait" src="images/iustin.jpg" width="512" height="512" alt="Iustin-Alex Neagu at the board during a tournament game">
+      <div class="identity-text">
+        <div class="eyebrow">FIDE rating progression</div>
+        <h1 id="name">Iustin-Alex Neagu</h1>
+        <div class="meta" id="meta"></div>
+      </div>
     </div>
     <div class="headline">
       <div class="eyebrow">Standard Elo</div>
